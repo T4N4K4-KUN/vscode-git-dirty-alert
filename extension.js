@@ -16,14 +16,14 @@ const DEFAULT_TIERS = [
   {
     name: 'Tier2',
     types: ['behind'],
-    backgroundColor: 'gitDirtyAlert.tier2Background',
-    foregroundColor: 'gitDirtyAlert.tier2Foreground',
+    backgroundColor: 'statusBarItem.warningBackground',
+    foregroundColor: 'statusBarItem.warningForeground',
   },
   {
     name: 'Tier3',
     types: ['uncommitted'],
-    backgroundColor: 'gitDirtyAlert.tier3Background',
-    foregroundColor: 'gitDirtyAlert.tier3Foreground',
+    backgroundColor: 'statusBarItem.prominentBackground',
+    foregroundColor: 'statusBarItem.prominentForeground',
   },
 ];
 
@@ -46,10 +46,10 @@ const LEGACY_DEFAULTS = {
 };
 
 const COLOR_DEFAULTS = {
-  'gitDirtyAlert.tier2Background': '#d9822b',
-  'gitDirtyAlert.tier2Foreground': '#ffffff',
-  'gitDirtyAlert.tier3Background': '#f2c94c',
-  'gitDirtyAlert.tier3Foreground': '#000000',
+  'statusBarItem.warningBackground': '#d9822b',
+  'statusBarItem.warningForeground': '#ffffff',
+  'statusBarItem.prominentBackground': '#f2c94c',
+  'statusBarItem.prominentForeground': '#000000',
 };
 
 function logDebug(msg) {

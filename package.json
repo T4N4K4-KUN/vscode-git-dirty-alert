@@ -60,15 +60,15 @@
               "types": [
                 "behind"
               ],
-              "backgroundColor": "gitDirtyAlert.tier2Background",
-              "foregroundColor": "gitDirtyAlert.tier2Foreground"
+              "backgroundColor": "statusBarItem.warningBackground",
+              "foregroundColor": "statusBarItem.warningForeground"
             },
             "tier3": {
               "types": [
                 "uncommitted"
               ],
-              "backgroundColor": "gitDirtyAlert.tier3Background",
-              "foregroundColor": "gitDirtyAlert.tier3Foreground"
+              "backgroundColor": "statusBarItem.prominentBackground",
+              "foregroundColor": "statusBarItem.prominentForeground"
             }
           },
           "description": "Alert tiers. Each tier defines which alert types trigger it and the colors to use.",
@@ -125,12 +125,12 @@
                 },
                 "backgroundColor": {
                   "type": "string",
-                  "default": "gitDirtyAlert.tier2Background",
+                  "default": "statusBarItem.warningBackground",
                   "description": "Theme color id for Tier 2 background."
                 },
                 "foregroundColor": {
                   "type": "string",
-                  "default": "gitDirtyAlert.tier2Foreground",
+                  "default": "statusBarItem.warningForeground",
                   "description": "Theme color id for Tier 2 foreground."
                 }
               }
@@ -156,12 +156,12 @@
                 },
                 "backgroundColor": {
                   "type": "string",
-                  "default": "gitDirtyAlert.tier3Background",
+                  "default": "statusBarItem.prominentBackground",
                   "description": "Theme color id for Tier 3 background."
                 },
                 "foregroundColor": {
                   "type": "string",
-                  "default": "gitDirtyAlert.tier3Foreground",
+                  "default": "statusBarItem.prominentForeground",
                   "description": "Theme color id for Tier 3 foreground."
                 }
               }
@@ -169,44 +169,6 @@
           }
         }
       }
-    },
-    "colors": [
-      {
-        "id": "gitDirtyAlert.tier2Background",
-        "description": "Tier 2 status bar background color.",
-        "defaults": {
-          "dark": "#d9822b",
-          "light": "#d9822b",
-          "highContrast": "#d9822b"
-        }
-      },
-      {
-        "id": "gitDirtyAlert.tier2Foreground",
-        "description": "Tier 2 status bar foreground color.",
-        "defaults": {
-          "dark": "#ffffff",
-          "light": "#ffffff",
-          "highContrast": "#ffffff"
-        }
-      },
-      {
-        "id": "gitDirtyAlert.tier3Background",
-        "description": "Tier 3 status bar background color.",
-        "defaults": {
-          "dark": "#f2c94c",
-          "light": "#f2c94c",
-          "highContrast": "#f2c94c"
-        }
-      },
-      {
-        "id": "gitDirtyAlert.tier3Foreground",
-        "description": "Tier 3 status bar foreground color.",
-        "defaults": {
-          "dark": "#ffffff",
-          "light": "#000000",
-          "highContrast": "#ffffff"
-        }
-      }
-    ]
+    }
   }
 }
