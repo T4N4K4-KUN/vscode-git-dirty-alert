@@ -1,8 +1,11 @@
 # TODO
+## Now
+- Fix tier colors: behind-only should be orange; uncommitted-only should be yellow
+
 ## Next
-- 複数ワークスペース時の件数表示を微調整
-- パッケージング（VSIX）手順の検討
+- Adjust tooltip counts formatting if needed
+- Review VSIX packaging steps
 
 ## Later
-- Git 拡張 API の利用可否を検討
-- パフォーマンス計測
+- Evaluate Git extension API usage
+- Measure performance impact of polling
