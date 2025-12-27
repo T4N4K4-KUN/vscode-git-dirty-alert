@@ -5,6 +5,28 @@ let statusItem = null;
 let intervalId = null;
 let output = null;
 
+const ALERT_TYPES = new Set(['ahead', 'behind', 'uncommitted']);
+const DEFAULT_TIERS = [
+  {
+    name: 'Tier1',
+    types: ['ahead'],
+    backgroundColor: 'statusBarItem.errorBackground',
+    foregroundColor: 'statusBarItem.errorForeground',
+  },
+  {
+    name: 'Tier2',
+    types: ['behind'],
+    backgroundColor: 'statusBarItem.warningBackground',
+    foregroundColor: 'statusBarItem.warningForeground',
+  },
+  {
+    name: 'Tier3',
+    types: ['uncommitted'],
+    backgroundColor: 'statusBarItem.prominentBackground',
+    foregroundColor: 'statusBarItem.prominentForeground',
+  },
+];
+
 function logDebug(msg) {
   if (!output) {
     return;
@@ -46,6 +68,68 @@ async function getDirtyCountForFolder(folderPath, includeUntracked, debug) {
   return lines.length;
 }
 
+function parseAheadBehind(summaryLine) {
+  const aheadMatch = summaryLine.match(/ahead (\d+)/);
+  const behindMatch = summaryLine.match(/behind (\d+)/);
+  return {
+    ahead: aheadMatch ? Number(aheadMatch[1]) : 0,
+    behind: behindMatch ? Number(behindMatch[1]) : 0,
+  };
+}
+
+async function getAheadBehindForFolder(folderPath, debug) {
+  const res = await execGit(['status', '-sb'], folderPath);
+  if (!res.ok) {
+    if (debug) {
+      logDebug(`git status -sb failed in ${folderPath}: ${res.out}`);
+    }
+    return { ahead: 0, behind: 0 };
+  }
+
+  const line = res.out.split(/\r?\n/).find((l) => l.startsWith('## ')) || '';
+  const parsed = parseAheadBehind(line);
+  if (debug) {
+    logDebug(`git status -sb in ${folderPath}: ahead ${parsed.ahead}, behind ${parsed.behind}`);
+  }
+  return parsed;
+}
+
+function normalizeTier(raw, fallback) {
+  const hasRawTypes = raw && Object.prototype.hasOwnProperty.call(raw, 'types');
+  const types = Array.isArray(raw?.types) ? raw.types.filter((t) => ALERT_TYPES.has(t)) : [];
+  return {
+    name: fallback.name,
+    types: hasRawTypes ? types : fallback.types.slice(),
+    backgroundColor: typeof raw?.backgroundColor === 'string' ? raw.backgroundColor : fallback.backgroundColor,
+    foregroundColor: typeof raw?.foregroundColor === 'string' ? raw.foregroundColor : fallback.foregroundColor,
+  };
+}
+
+function loadTiers(config) {
+  const raw = config.get('tiers', {});
+  const tiers = [
+    normalizeTier(raw?.tier1, DEFAULT_TIERS[0]),
+    normalizeTier(raw?.tier2, DEFAULT_TIERS[1]),
+    normalizeTier(raw?.tier3, DEFAULT_TIERS[2]),
+  ];
+
+  const anySelected = tiers.some((tier) => tier.types.some((t) => ALERT_TYPES.has(t)));
+  if (!anySelected) {
+    return DEFAULT_TIERS.map((tier) => ({ ...tier, types: tier.types.slice() }));
+  }
+  return tiers;
+}
+
+function pickTier(tiers, totals) {
+  for (const tier of tiers) {
+    const triggered = tier.types.some((t) => totals[t] > 0);
+    if (triggered) {
+      return tier;
+    }
+  }
+  return null;
+}
+
 async function refreshStatus() {
   if (!statusItem) {
     return;
@@ -60,25 +144,46 @@ async function refreshStatus() {
   const config = vscode.workspace.getConfiguration('gitDirtyAlert');
   const includeUntracked = config.get('includeUntracked', true);
   const debug = config.get('debug', false);
+  const tiers = loadTiers(config);
 
   if (debug && output) {
     output.show(true);
   }
 
-  let total = 0;
+  let totalUncommitted = 0;
+  let totalAhead = 0;
+  let totalBehind = 0;
   const perRepo = [];
   for (const folder of folders) {
     const count = await getDirtyCountForFolder(folder.uri.fsPath, includeUntracked, debug);
-    total += count;
-    perRepo.push({ name: folder.name, path: folder.uri.fsPath, count });
+    const ab = await getAheadBehindForFolder(folder.uri.fsPath, debug);
+    totalUncommitted += count;
+    totalAhead += ab.ahead;
+    totalBehind += ab.behind;
+    perRepo.push({
+      name: folder.name,
+      path: folder.uri.fsPath,
+      uncommitted: count,
+      ahead: ab.ahead,
+      behind: ab.behind,
+    });
   }
 
-  if (total > 0) {
-    statusItem.text = `$(git-commit) ${total}`;
-    const lines = perRepo.map((r) => `${r.name}: ${r.count}`);
-    statusItem.tooltip = `Uncommitted changes: ${total}\n` + lines.join('\n');
-    statusItem.backgroundColor = new vscode.ThemeColor('statusBarItem.errorBackground');
-    statusItem.color = new vscode.ThemeColor('statusBarItem.errorForeground');
+  const totals = {
+    ahead: totalAhead,
+    behind: totalBehind,
+    uncommitted: totalUncommitted,
+  };
+  const tier = pickTier(tiers, totals);
+
+  if (tier) {
+    statusItem.text = `$(git-commit) A:${totalAhead} B:${totalBehind} U:${totalUncommitted}`;
+    const lines = perRepo.map(
+      (r) => `${r.name}: ahead ${r.ahead}, behind ${r.behind}, uncommitted ${r.uncommitted}`
+    );
+    statusItem.tooltip = `ahead: ${totalAhead}, behind: ${totalBehind}, uncommitted: ${totalUncommitted}\n` + lines.join('\n');
+    statusItem.backgroundColor = tier.backgroundColor ? new vscode.ThemeColor(tier.backgroundColor) : undefined;
+    statusItem.color = tier.foregroundColor ? new vscode.ThemeColor(tier.foregroundColor) : undefined;
     statusItem.show();
   } else {
     statusItem.hide();

@@ -1,7 +1,7 @@
 {
   "name": "vscode-git-dirty-alert",
   "displayName": "Git Dirty Alert",
-  "description": "Show a red status bar indicator when the working tree has uncommitted changes.",
+  "description": "Show a status bar alert for remote divergence and uncommitted changes.",
   "version": "0.2.0",
   "publisher": "t4n4k4-kun",
   "engines": {
@@ -40,6 +40,128 @@
           "type": "boolean",
           "default": false,
           "description": "Enable debug logging to the Output panel."
+        },
+        "gitDirtyAlert.tiers": {
+          "type": "object",
+          "default": {
+            "tier1": {
+              "types": [
+                "ahead"
+              ],
+              "backgroundColor": "statusBarItem.errorBackground",
+              "foregroundColor": "statusBarItem.errorForeground"
+            },
+            "tier2": {
+              "types": [
+                "behind"
+              ],
+              "backgroundColor": "statusBarItem.warningBackground",
+              "foregroundColor": "statusBarItem.warningForeground"
+            },
+            "tier3": {
+              "types": [
+                "uncommitted"
+              ],
+              "backgroundColor": "statusBarItem.prominentBackground",
+              "foregroundColor": "statusBarItem.prominentForeground"
+            }
+          },
+          "description": "Alert tiers. Each tier defines which alert types trigger it and the colors to use.",
+          "properties": {
+            "tier1": {
+              "type": "object",
+              "description": "Highest priority tier.",
+              "properties": {
+                "types": {
+                  "type": "array",
+                  "default": [
+                    "ahead"
+                  ],
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "ahead",
+                      "behind",
+                      "uncommitted"
+                    ]
+                  },
+                  "description": "Alert types that trigger Tier 1."
+                },
+                "backgroundColor": {
+                  "type": "string",
+                  "default": "statusBarItem.errorBackground",
+                  "description": "Theme color id for Tier 1 background."
+                },
+                "foregroundColor": {
+                  "type": "string",
+                  "default": "statusBarItem.errorForeground",
+                  "description": "Theme color id for Tier 1 foreground."
+                }
+              }
+            },
+            "tier2": {
+              "type": "object",
+              "description": "Middle priority tier.",
+              "properties": {
+                "types": {
+                  "type": "array",
+                  "default": [
+                    "behind"
+                  ],
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "ahead",
+                      "behind",
+                      "uncommitted"
+                    ]
+                  },
+                  "description": "Alert types that trigger Tier 2."
+                },
+                "backgroundColor": {
+                  "type": "string",
+                  "default": "statusBarItem.warningBackground",
+                  "description": "Theme color id for Tier 2 background."
+                },
+                "foregroundColor": {
+                  "type": "string",
+                  "default": "statusBarItem.warningForeground",
+                  "description": "Theme color id for Tier 2 foreground."
+                }
+              }
+            },
+            "tier3": {
+              "type": "object",
+              "description": "Lowest priority tier.",
+              "properties": {
+                "types": {
+                  "type": "array",
+                  "default": [
+                    "uncommitted"
+                  ],
+                  "items": {
+                    "type": "string",
+                    "enum": [
+                      "ahead",
+                      "behind",
+                      "uncommitted"
+                    ]
+                  },
+                  "description": "Alert types that trigger Tier 3."
+                },
+                "backgroundColor": {
+                  "type": "string",
+                  "default": "statusBarItem.prominentBackground",
+                  "description": "Theme color id for Tier 3 background."
+                },
+                "foregroundColor": {
+                  "type": "string",
+                  "default": "statusBarItem.prominentForeground",
+                  "description": "Theme color id for Tier 3 foreground."
+                }
+              }
+            }
+          }
         }
       }
     }

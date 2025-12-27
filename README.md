@@ -1,9 +1,11 @@
 # vscode-git-dirty-alert
 
-Show a red status bar indicator in VSCode when your working tree has uncommitted changes.
+Show a status bar alert in VSCode for remote divergence and uncommitted changes.
 
 ## Features
-- Red status bar badge when dirty (no notifications)
+- Tiered status bar alerts for `ahead`, `behind`, and `uncommitted`
+- Highest-priority tier color is shown in the status bar
+- Tooltip shows all three counts per repo
 - Click the badge to open Source Control
 - Polling interval is configurable
 
@@ -15,6 +17,33 @@ Show a red status bar indicator in VSCode when your working tree has uncommitted
 ## Settings
 - `gitDirtyAlert.pollingSeconds` (default: 30, min: 10, recommended: 30+)
 - `gitDirtyAlert.includeUntracked` (default: true)
+- `gitDirtyAlert.tiers` (tier rules and colors)
+
+### Tiers
+Each tier chooses alert types and colors. The highest tier that matches is used.
+
+Default:
+```json
+{
+  "gitDirtyAlert.tiers": {
+    "tier1": {
+      "types": ["ahead"],
+      "backgroundColor": "statusBarItem.errorBackground",
+      "foregroundColor": "statusBarItem.errorForeground"
+    },
+    "tier2": {
+      "types": ["behind"],
+      "backgroundColor": "statusBarItem.warningBackground",
+      "foregroundColor": "statusBarItem.warningForeground"
+    },
+    "tier3": {
+      "types": ["uncommitted"],
+      "backgroundColor": "statusBarItem.prominentBackground",
+      "foregroundColor": "statusBarItem.prominentForeground"
+    }
+  }
+}
+```
 
 ## Command
 - `Git Dirty Alert: Open Source Control`
