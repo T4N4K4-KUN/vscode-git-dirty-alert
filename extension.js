@@ -66,13 +66,17 @@ async function refreshStatus() {
   }
 
   let total = 0;
+  const perRepo = [];
   for (const folder of folders) {
-    total += await getDirtyCountForFolder(folder.uri.fsPath, includeUntracked, debug);
+    const count = await getDirtyCountForFolder(folder.uri.fsPath, includeUntracked, debug);
+    total += count;
+    perRepo.push({ name: folder.name, path: folder.uri.fsPath, count });
   }
 
   if (total > 0) {
     statusItem.text = `$(git-commit) ${total}`;
-    statusItem.tooltip = `Uncommitted changes: ${total}`;
+    const lines = perRepo.map((r) => `${r.name}: ${r.count}`);
+    statusItem.tooltip = `Uncommitted changes: ${total}\n` + lines.join('\n');
     statusItem.backgroundColor = new vscode.ThemeColor('statusBarItem.errorBackground');
     statusItem.color = new vscode.ThemeColor('statusBarItem.errorForeground');
     statusItem.show();
