@@ -9,7 +9,7 @@ const ALERT_TYPES = new Set(['ahead', 'behind', 'uncommitted']);
 const DEFAULT_TIERS = [
   {
     name: 'Tier1',
-    types: ['ahead'],
+    types: ['ahead', 'uncommitted'],
     backgroundColor: 'statusBarItem.errorBackground',
     foregroundColor: 'statusBarItem.errorForeground',
   },
@@ -21,7 +21,7 @@ const DEFAULT_TIERS = [
   },
   {
     name: 'Tier3',
-    types: ['uncommitted'],
+    types: [],
     backgroundColor: 'statusBarItem.warningBackground',
     foregroundColor: 'statusBarItem.warningForeground',
   },

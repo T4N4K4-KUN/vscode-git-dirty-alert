@@ -28,7 +28,7 @@ Default:
 {
   "gitDirtyAlert.tiers": {
     "tier1": {
-      "types": ["ahead"],
+      "types": ["ahead", "uncommitted"],
       "backgroundColor": "statusBarItem.errorBackground",
       "foregroundColor": "statusBarItem.errorForeground"
     },
@@ -38,7 +38,7 @@ Default:
       "foregroundColor": "statusBarItem.warningForeground"
     },
     "tier3": {
-      "types": ["uncommitted"],
+      "types": [],
       "backgroundColor": "statusBarItem.warningBackground",
       "foregroundColor": "statusBarItem.warningForeground"
     }
