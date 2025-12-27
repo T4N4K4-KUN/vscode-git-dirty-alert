@@ -216,6 +216,11 @@ async function refreshStatus() {
   const tier = pickTier(tiers, totals);
 
   if (tier) {
+    if (debug) {
+      logDebug(
+        `tier selected: ${tier.name} (bg: ${tier.backgroundColor || 'none'}, fg: ${tier.foregroundColor || 'none'})`
+      );
+    }
     statusItem.text = `$(git-commit) A:${totalAhead} B:${totalBehind} U:${totalUncommitted}`;
     const lines = perRepo.map(
       (r) => `${r.name}: ahead ${r.ahead}, behind ${r.behind}, uncommitted ${r.uncommitted}`
