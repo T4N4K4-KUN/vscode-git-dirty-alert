@@ -18,3 +18,5 @@ Show a red status bar indicator in VSCode when your working tree has uncommitted
 
 ## Command
 - `Git Dirty Alert: Open Source Control`
+ 
+ 
