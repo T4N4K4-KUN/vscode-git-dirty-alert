@@ -17,6 +17,7 @@ Show a status bar alert in VSCode for remote divergence and uncommitted changes.
 ## Settings
 - `gitDirtyAlert.pollingSeconds` (default: 30, min: 10, recommended: 30+)
 - `gitDirtyAlert.includeUntracked` (default: true)
+- `gitDirtyAlert.applyColorCustomizations` (default: true)
 - `gitDirtyAlert.tiers` (tier rules and colors)
 
 ### Tiers

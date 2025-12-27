@@ -41,6 +41,11 @@
           "default": false,
           "description": "Enable debug logging to the Output panel."
         },
+        "gitDirtyAlert.applyColorCustomizations": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-apply workbench color customizations for tier colors when missing."
+        },
         "gitDirtyAlert.tiers": {
           "type": "object",
           "default": {

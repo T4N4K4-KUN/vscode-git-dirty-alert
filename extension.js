@@ -45,6 +45,13 @@ const LEGACY_DEFAULTS = {
   },
 };
 
+const COLOR_DEFAULTS = {
+  'gitDirtyAlert.tier2Background': '#d9822b',
+  'gitDirtyAlert.tier2Foreground': '#ffffff',
+  'gitDirtyAlert.tier3Background': '#f2c94c',
+  'gitDirtyAlert.tier3Foreground': '#000000',
+};
+
 function logDebug(msg) {
   if (!output) {
     return;
@@ -233,6 +240,30 @@ function startPolling() {
   intervalId = setInterval(refreshStatus, seconds * 1000);
 }
 
+async function applyColorCustomizations() {
+  const config = vscode.workspace.getConfiguration('gitDirtyAlert');
+  const enable = config.get('applyColorCustomizations', true);
+  if (!enable) {
+    return;
+  }
+
+  const workbenchConfig = vscode.workspace.getConfiguration('workbench');
+  const current = workbenchConfig.get('colorCustomizations') || {};
+  let updated = false;
+  const next = { ...current };
+
+  for (const [key, value] of Object.entries(COLOR_DEFAULTS)) {
+    if (next[key] === undefined) {
+      next[key] = value;
+      updated = true;
+    }
+  }
+
+  if (updated) {
+    await workbenchConfig.update('colorCustomizations', next, vscode.ConfigurationTarget.Global);
+  }
+}
+
 function activate(context) {
   output = vscode.window.createOutputChannel('Git Dirty Alert');
   statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
@@ -256,8 +287,10 @@ function activate(context) {
     }
   }));
 
-  startPolling();
-  refreshStatus();
+  applyColorCustomizations().finally(() => {
+    startPolling();
+    refreshStatus();
+  });
 }
 
 function deactivate() {
