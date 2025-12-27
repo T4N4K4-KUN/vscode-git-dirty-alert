@@ -459,7 +459,7 @@ async function refreshStatus() {
     }
     await ensureWarningColorsForTier(tier.name, debug);
     const display = formatTotals(displayOrder, totals);
-    statusItem.text = `$(git-commit) ${display.text}`;
+    statusItem.text = `$(sync-ignored) ${display.text}`;
     const lines = perRepo.map((r) =>
       `[${r.name}] ${displayOrder.map((t) => `${display.map[t].short}:${r[t]}`).join(' ')}`
     );
