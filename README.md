@@ -18,3 +18,9 @@ Show a red status bar indicator in VSCode when your working tree has uncommitted
 
 ## Command
 - `Git Dirty Alert: Open Source Control`
+
+## Debug
+- Open Settings and enable `gitDirtyAlert.debug`
+- Open `View > Output` and select `Git Dirty Alert`
+- Edit a file to see log lines like `git status in <path>: <N> changes`
+

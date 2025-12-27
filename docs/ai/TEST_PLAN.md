@@ -6,4 +6,5 @@
 - `gitDirtyAlert.pollingSeconds` を変更すると反映される
 - [x] 変更があるときに赤いステータス表示が出る（ツールチップ: Uncommitted changes: 2）
 - [x] クリックで SCM ビューが開く
+- [x] `gitDirtyAlert.debug` を有効化すると Output にログが出る
 
