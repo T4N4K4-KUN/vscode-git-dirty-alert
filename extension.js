@@ -243,6 +243,7 @@ function startPolling() {
 async function applyColorCustomizations() {
   const config = vscode.workspace.getConfiguration('gitDirtyAlert');
   const enable = config.get('applyColorCustomizations', true);
+  const debug = config.get('debug', false);
   if (!enable) {
     return;
   }
@@ -261,6 +262,11 @@ async function applyColorCustomizations() {
 
   if (updated) {
     await workbenchConfig.update('colorCustomizations', next, vscode.ConfigurationTarget.Global);
+    if (debug) {
+      logDebug('Applied workbench.colorCustomizations for tier colors.');
+    }
+  } else if (debug) {
+    logDebug('Workbench colorCustomizations already set for tier colors.');
   }
 }
 
