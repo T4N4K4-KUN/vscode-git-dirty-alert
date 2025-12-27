@@ -2,3 +2,4 @@
 - 通知は使わずステータスバーで可視化する
 - Git の状態取得は `git status --porcelain` を使用する
 - 一定間隔のポーリングとファイルイベントで更新する
+- Tier2/Tier3 は `statusBarItem.warning*` を使い、Tierごとに色を切り替える

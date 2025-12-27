@@ -1,6 +1,6 @@
 # TODO
 ## Now
-- Fix tier colors: behind-only should be orange; uncommitted-only should be yellow
+- (done) Tier colors: behind-only is orange; uncommitted-only is yellow
 
 ## Next
 - Adjust tooltip counts formatting if needed
