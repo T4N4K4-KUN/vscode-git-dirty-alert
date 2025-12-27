@@ -22,8 +22,8 @@ const DEFAULT_TIERS = [
   {
     name: 'Tier3',
     types: ['uncommitted'],
-    backgroundColor: 'statusBarItem.prominentBackground',
-    foregroundColor: 'statusBarItem.prominentForeground',
+    backgroundColor: 'statusBarItem.activeBackground',
+    foregroundColor: 'statusBarItem.activeForeground',
   },
 ];
 
@@ -48,8 +48,8 @@ const LEGACY_DEFAULTS = {
 const COLOR_DEFAULTS = {
   'statusBarItem.warningBackground': '#d9822b',
   'statusBarItem.warningForeground': '#ffffff',
-  'statusBarItem.prominentBackground': '#f2c94c',
-  'statusBarItem.prominentForeground': '#000000',
+  'statusBarItem.activeBackground': '#f2c94c',
+  'statusBarItem.activeForeground': '#000000',
 };
 
 function logDebug(msg) {

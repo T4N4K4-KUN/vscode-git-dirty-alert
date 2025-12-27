@@ -39,8 +39,8 @@ Default:
     },
     "tier3": {
       "types": ["uncommitted"],
-      "backgroundColor": "statusBarItem.prominentBackground",
-      "foregroundColor": "statusBarItem.prominentForeground"
+      "backgroundColor": "statusBarItem.activeBackground",
+      "foregroundColor": "statusBarItem.activeForeground"
     }
   }
 }
