@@ -426,10 +426,8 @@ async function refreshStatus() {
     }
     await ensureWarningColorsForTier(tier.name, debug);
     statusItem.text = `$(git-commit) A:${totalAhead} B:${totalBehind} U:${totalUncommitted}`;
-    const lines = perRepo.map(
-      (r) => `${r.name}: ahead ${r.ahead}, behind ${r.behind}, uncommitted ${r.uncommitted}`
-    );
-    statusItem.tooltip = `ahead: ${totalAhead}, behind: ${totalBehind}, uncommitted: ${totalUncommitted}\n` + lines.join('\n');
+    const lines = perRepo.map((r) => `[${r.name}] A:${r.ahead} B:${r.behind} U:${r.uncommitted}`);
+    statusItem.tooltip = `Ahead:${totalAhead} Behind:${totalBehind} Uncommitted:${totalUncommitted}\n` + lines.join('\n');
     statusItem.backgroundColor = tier.backgroundColor ? new vscode.ThemeColor(tier.backgroundColor) : undefined;
     statusItem.color = tier.foregroundColor ? new vscode.ThemeColor(tier.foregroundColor) : undefined;
     statusItem.show();
