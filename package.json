@@ -197,9 +197,9 @@
         "id": "gitDirtyAlert.tier3Foreground",
         "description": "Tier 3 status bar foreground color.",
         "defaults": {
-          "dark": "#000000",
+          "dark": "#ffffff",
           "light": "#000000",
-          "highContrast": "#000000"
+          "highContrast": "#ffffff"
         }
       }
     ]
