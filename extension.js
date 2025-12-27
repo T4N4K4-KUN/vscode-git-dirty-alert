@@ -16,16 +16,34 @@ const DEFAULT_TIERS = [
   {
     name: 'Tier2',
     types: ['behind'],
-    backgroundColor: 'statusBarItem.warningBackground',
-    foregroundColor: 'statusBarItem.warningForeground',
+    backgroundColor: 'gitDirtyAlert.tier2Background',
+    foregroundColor: 'gitDirtyAlert.tier2Foreground',
   },
   {
     name: 'Tier3',
     types: ['uncommitted'],
+    backgroundColor: 'gitDirtyAlert.tier3Background',
+    foregroundColor: 'gitDirtyAlert.tier3Foreground',
+  },
+];
+
+const LEGACY_DEFAULTS = {
+  tier1: {
+    types: ['ahead'],
+    backgroundColor: 'statusBarItem.errorBackground',
+    foregroundColor: 'statusBarItem.errorForeground',
+  },
+  tier2: {
+    types: ['behind'],
+    backgroundColor: 'statusBarItem.warningBackground',
+    foregroundColor: 'statusBarItem.warningForeground',
+  },
+  tier3: {
+    types: ['uncommitted'],
     backgroundColor: 'statusBarItem.prominentBackground',
     foregroundColor: 'statusBarItem.prominentForeground',
   },
-];
+};
 
 function logDebug(msg) {
   if (!output) {
@@ -107,10 +125,24 @@ function normalizeTier(raw, fallback) {
 
 function loadTiers(config) {
   const raw = config.get('tiers', {});
+  const looksLegacy =
+    Array.isArray(raw?.tier1?.types) &&
+    Array.isArray(raw?.tier2?.types) &&
+    Array.isArray(raw?.tier3?.types) &&
+    raw.tier1.types.join(',') === LEGACY_DEFAULTS.tier1.types.join(',') &&
+    raw.tier2.types.join(',') === LEGACY_DEFAULTS.tier2.types.join(',') &&
+    raw.tier3.types.join(',') === LEGACY_DEFAULTS.tier3.types.join(',') &&
+    raw.tier1.backgroundColor === LEGACY_DEFAULTS.tier1.backgroundColor &&
+    raw.tier1.foregroundColor === LEGACY_DEFAULTS.tier1.foregroundColor &&
+    raw.tier2.backgroundColor === LEGACY_DEFAULTS.tier2.backgroundColor &&
+    raw.tier2.foregroundColor === LEGACY_DEFAULTS.tier2.foregroundColor &&
+    raw.tier3.backgroundColor === LEGACY_DEFAULTS.tier3.backgroundColor &&
+    raw.tier3.foregroundColor === LEGACY_DEFAULTS.tier3.foregroundColor;
+  const source = looksLegacy ? {} : raw;
   const tiers = [
-    normalizeTier(raw?.tier1, DEFAULT_TIERS[0]),
-    normalizeTier(raw?.tier2, DEFAULT_TIERS[1]),
-    normalizeTier(raw?.tier3, DEFAULT_TIERS[2]),
+    normalizeTier(source?.tier1, DEFAULT_TIERS[0]),
+    normalizeTier(source?.tier2, DEFAULT_TIERS[1]),
+    normalizeTier(source?.tier3, DEFAULT_TIERS[2]),
   ];
 
   const anySelected = tiers.some((tier) => tier.types.some((t) => ALERT_TYPES.has(t)));
