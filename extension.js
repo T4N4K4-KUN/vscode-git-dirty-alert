@@ -333,6 +333,38 @@ function normalizeTier(raw, fallback) {
   };
 }
 
+function getDisplayOrder(config, tiers) {
+  const raw = config.get('tiers', {});
+  const order = [];
+  const seen = new Set();
+  const tierKeys = ['tier1', 'tier2', 'tier3'];
+
+  for (let i = 0; i < tierKeys.length; i += 1) {
+    const key = tierKeys[i];
+    const rawTypes = Array.isArray(raw?.[key]?.types) ? raw[key].types : null;
+    const types = rawTypes || tiers[i]?.types || [];
+    types.forEach((t) => {
+      if (ALERT_TYPES.has(t) && !seen.has(t)) {
+        seen.add(t);
+        order.push(t);
+      }
+    });
+  }
+
+  return order;
+}
+
+function formatTotals(order, totals) {
+  const map = {
+    ahead: { short: 'A', long: 'Ahead' },
+    behind: { short: 'B', long: 'Behind' },
+    uncommitted: { short: 'U', long: 'Uncommitted' },
+  };
+  const text = order.map((t) => `${map[t].short}:${totals[t]}`).join(' ');
+  const header = order.map((t) => `${map[t].long}:${totals[t]}`).join(' ');
+  return { text, header, map };
+}
+
 function loadTiers(config) {
   const raw = config.get('tiers', {});
   const looksLegacy =
@@ -387,6 +419,7 @@ async function refreshStatus() {
   const includeUntracked = config.get('includeUntracked', true);
   const debug = config.get('debug', false);
   const tiers = loadTiers(config);
+  const displayOrder = getDisplayOrder(config, tiers);
 
   if (debug && output) {
     output.show(true);
@@ -425,9 +458,12 @@ async function refreshStatus() {
       );
     }
     await ensureWarningColorsForTier(tier.name, debug);
-    statusItem.text = `$(git-commit) A:${totalAhead} B:${totalBehind} U:${totalUncommitted}`;
-    const lines = perRepo.map((r) => `[${r.name}] A:${r.ahead} B:${r.behind} U:${r.uncommitted}`);
-    statusItem.tooltip = `Ahead:${totalAhead} Behind:${totalBehind} Uncommitted:${totalUncommitted}\n` + lines.join('\n');
+    const display = formatTotals(displayOrder, totals);
+    statusItem.text = `$(git-commit) ${display.text}`;
+    const lines = perRepo.map((r) =>
+      `[${r.name}] ${displayOrder.map((t) => `${display.map[t].short}:${r[t]}`).join(' ')}`
+    );
+    statusItem.tooltip = `${display.header}\n` + lines.join('\n');
     statusItem.backgroundColor = tier.backgroundColor ? new vscode.ThemeColor(tier.backgroundColor) : undefined;
     statusItem.color = tier.foregroundColor ? new vscode.ThemeColor(tier.foregroundColor) : undefined;
     statusItem.show();
