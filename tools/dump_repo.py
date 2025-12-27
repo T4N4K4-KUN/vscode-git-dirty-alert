@@ -6,8 +6,8 @@
 # - Excludes common huge dirs and binary extensions
 #
 # Usage:
-#   python tools/dump_repo.py --out repo_dump.txt --include-diff
-#   python tools/dump_repo.py --out repo_dump.txt --max-bytes 2000000
+#   python tools/dump_repo.py --out out/repo_dump.txt --include-diff
+#   python tools/dump_repo.py --out out/repo_dump.txt --max-bytes 2000000
 
 from __future__ import annotations
 
@@ -104,14 +104,24 @@ def looks_binary(path: Path, binary_exts: List[str]) -> bool:
         return True
 
 
-def git_ls_files(repo_root: Path) -> List[Path]:
+def git_ls_files(repo_root: Path, include_untracked: bool) -> List[Path]:
     code, out = run(["git", "ls-files", "-z"], repo_root)
     if code != 0:
         raise RuntimeError("git ls-files failed:\n" + out)
     raw = out
     # When capture_output text=True, NULs may be preserved; split accordingly:
     files = [s for s in raw.split("\x00") if s]
-    return [repo_root / s for s in files]
+    tracked = {repo_root / s for s in files}
+
+    if include_untracked:
+        code, out = run(["git", "ls-files", "--others", "--exclude-standard", "-z"], repo_root)
+        if code != 0:
+            raise RuntimeError("git ls-files --others failed:\n" + out)
+        raw = out
+        untracked = {repo_root / s for s in raw.split("\x00") if s}
+        return sorted(tracked | untracked)
+
+    return sorted(tracked)
 
 
 def write_section(fp, title: str, body: str) -> None:
@@ -122,9 +132,10 @@ def write_section(fp, title: str, body: str) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default="repo_dump.txt")
+    ap.add_argument("--out", default="out/repo_dump.txt")
     ap.add_argument("--max-bytes", type=int, default=0, help="0 means no limit; otherwise truncate huge text files")
     ap.add_argument("--include-diff", action="store_true", help="Include git diff in header")
+    ap.add_argument("--include-untracked", action="store_true", help="Include untracked files")
     ap.add_argument("--exclude-dir", action="append", default=[])
     ap.add_argument("--exclude-glob", action="append", default=[])
     args = ap.parse_args()
@@ -139,9 +150,10 @@ def main() -> None:
     exclude_globs = list(args.exclude_glob or [])
     binary_exts = DEFAULT_BINARY_EXTS
 
-    files = git_ls_files(repo_root)
+    files = git_ls_files(repo_root, args.include_untracked)
 
     out_path = (repo_root / args.out).resolve()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
     total_text = 0
     total_bin = 0
     total_skipped = 0

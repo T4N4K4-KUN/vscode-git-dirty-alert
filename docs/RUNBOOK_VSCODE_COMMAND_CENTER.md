@@ -1,4 +1,3 @@
-[RUNBOOK_VSCODE_COMMAND_CENTER.md](https://github.com/user-attachments/files/24343570/RUNBOOK_VSCODE_COMMAND_CENTER.md)
 # VS Code司令塔（Codex拡張）テンプレート運用：Runbook
 `docs/RUNBOOK_VSCODE_COMMAND_CENTER.md`
 
@@ -7,6 +6,9 @@
 
 > 続きは会話履歴に依存しません。  
 > **`docs/ai/` とGit履歴**を真実にして、タワーPC/ノート/将来Macでも復帰できる運用にします。
+
+> 運用の設計原則は `docs/TEMPLATE_DESIGN.md` に集約。  
+> このRunbookは **日々の運用手順**に特化します。
 
 ---
 
@@ -25,7 +27,7 @@
 
 1) `docs/ai/CONTEXT.md` をプロジェクト用に埋める  
 2) `docs/ai/TODO.md` を最初のチェックリストにする  
-3) 最小PoC（スクショ1枚）を実行して成功させる  
+3) `scripts/run.*` で最小確認を実行  
 4) ここまでをコミットしてpush（“初期状態”をGitに固定）
 
 ---
@@ -46,11 +48,11 @@
 ### 3.1 runで必ず残すもの
 - ブランチ名
 - コミット（差分）
-- 実行結果（ログ/スクショ）
+- 実行結果（ログ/成果物）
 - 学び（LESSONS/DECISIONS/TODO更新）
 
 ### 3.2 推奨：`runs/` にrun記録を残す
-例：`runs/2025-12-26_reader-settings-v1/RUN.md`
+例：`runs/2025-12-26_template-v1/RUN.md`
 
 RUN.mdの最低限：
 - 目的
@@ -84,11 +86,10 @@ VS Code Source Control / GitHub Desktopで：
 
 ---
 
-## 5. 実行（Playwright）運用ルール
-- ヘッドレス固定（再現性）
-- viewport固定（端末差を減らす）
-- sleep乱用禁止（DOM状態で待つ）
-- `out/` に成果物（スクショ/ログ）を出す
+## 5. 実行運用ルール（再現性）
+- 実行環境の差を減らすため、setup/runを固定
+- 外部依存の導入は `requirements.txt` 等に集約
+- 成果物は `out/` に出し、必要なら `runs/` にコピー
 
 ---
 
@@ -104,7 +105,7 @@ VS Code Source Control / GitHub Desktopで：
 - 原因：
 - 対策：
 - 再発防止ルール：
-- 影響範囲（OS/端末/サイト/ブラウザ）：
+- 影響範囲（OS/端末/環境差）：
 
 ---
 
@@ -122,8 +123,8 @@ VS Code Source Control / GitHub Desktopで：
 ## 8. 端末が変わる時（タワー→ノート→Mac）
 チェックリスト：
 - [ ] `git pull`
-- [ ] 依存が揃っている（setup実行 or venv+playwright install）
-- [ ] PoCが通る
+- [ ] 依存が揃っている（setup実行 or requirements導入）
+- [ ] `scripts/run.*` が通る
 - [ ] 復帰プロンプトで `CONTEXT/TODO` を読ませた
 
 ---
@@ -131,7 +132,7 @@ VS Code Source Control / GitHub Desktopで：
 ## 9. コスト/上限制御（追加課金を増やさない）
 - 1 run を短く（差分を小さく）
 - 詰まったら先に `docs/ai/` を更新して整理→再トライ
-- それでも回らない時だけ fallback（例：Cline+Gemini）を検討
+- それでも回らない時だけ fallback（例：別LLM）を検討
 
 ---
 
@@ -141,17 +142,17 @@ VS Code Source Control / GitHub Desktopで：
 > 新しいブランチを作り、1コミット=1意図で差分を出して。  
 > 実行コマンドと確認ポイントも提示して。
 
-### 10.2 実装（Playwright）
-> `automation/` の既存構成に合わせて、設定を定数化して適用する処理を追加して。  
-> DOMセレクタ優先で、座標クリックは避けて。  
-> ヘッドレス実行で out/ にスクショ2枚（設定画面/反映後）を出して。
+### 10.2 実装
+> 既存構成に合わせて設定を定数化して適用して。  
+> 変更は最小で、runが1回で確認できる形にして。  
+> 必要なら `docs/ai/DECISIONS.md` を更新して。
 
 ### 10.3 デバッグ
 > この失敗ログと該当コードから原因仮説を3つ、確度順に出して。  
 > 最小修正から試し、結果を `docs/ai/LESSONS.md` に追記して。
 
 ### 10.4 ドキュメント化
-> `automation/` を読んで、セットアップ手順と運用Runbookを `docs/` に更新して。  
+> セットアップ手順と運用Runbookを `docs/` に更新して。  
 > 端末が変わっても復帰できる運用（docs/ai中心）を最優先で。
 
 ---
@@ -162,16 +163,16 @@ VS Code Source Control / GitHub Desktopで：
 - 別PCで再開するには、作業ブランチがリモートにpushされていることが必須。
 
 ### A) 中断する前（30秒チェック）
-1. `docs/ai/TODO.md` を更新（次にやることが1〜3項目で分かる状態）
-2. 小さくコミット（途中でもOK、1コミット=1意図）
-3. 作業ブランチを push（GitHubに上げる）
+1) `docs/ai/TODO.md` を更新（次にやることが1～3項目で分かる状態）
+2) 小さくコミット（途中でもOK、1コミット=1意図）
+3) 作業ブランチを push（GitHubに上げる）
 ※推奨：PRをDraftで作る
 
 ### B) 別PCで再開（最短）
-1. repoを clone/pull
-2. `scripts/setup` を実行（端末ごとに一度だけ）
-3. 作業ブランチに切り替える（またはTODO冒頭のCurrent Branchを見る）
-4. Codexに再開プロンプトを投げる
+1) repoを clone/pull
+2) `scripts/setup.*` を実行（端末ごとに一度だけ）
+3) 作業ブランチに切り替える（またはTODO冒頭のCurrent Branchを見る）
+4) Codexに再開プロンプトを投げる
 
 ### 再開プロンプト（固定）
 > `docs/ai/BRIEF.md` と `docs/ai/PLAN.md` と `docs/ai/TODO.md` を読んで、前回の続きから進めて。  
@@ -182,4 +183,5 @@ VS Code Source Control / GitHub Desktopで：
 
 ## 開始儀式（新規PJ開始の最初の一言）
 Codexにこれだけ言えばよい：
-> では開発を始めて。`docs/ai/BRIEF.md` を読み、足りない点だけ質問して、`PLAN.md`/`TEST_PLAN.md`/`TODO.md` を作成し、TODO順に進めて。
+> では開発を始めて。`docs/ai/BRIEF.md` を読み、足りない点だけ質問して、  
+> `PLAN.md`/`TEST_PLAN.md`/`TODO.md` を作成し、TODO順に進めて。

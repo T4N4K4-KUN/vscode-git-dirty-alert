@@ -58,7 +58,7 @@ if ($Mode -eq "apply") {
 
 $venvPy = ".\\.venv\\Scripts\\python.exe"
 if (Test-Path $venvPy) {
-  & $venvPy tools\\dump_repo.py --out repo_dump.txt --include-diff
+  & $venvPy tools\\dump_repo.py --out out\\repo_dump.txt --include-diff
 } else {
-  python tools\\dump_repo.py --out repo_dump.txt --include-diff
+  python tools\\dump_repo.py --out out\\repo_dump.txt --include-diff
 }
