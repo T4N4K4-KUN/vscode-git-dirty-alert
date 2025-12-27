@@ -19,6 +19,10 @@
       {
         "command": "gitDirtyAlert.openScm",
         "title": "Git Dirty Alert: Open Source Control"
+      },
+      {
+        "command": "gitDirtyAlert.openSettings",
+        "title": "Git Dirty Alert: Open Settings"
       }
     ],
     "configuration": {

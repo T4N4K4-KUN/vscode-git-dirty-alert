@@ -48,6 +48,10 @@ Default:
 
 ## Command
 - `Git Dirty Alert: Open Source Control`
+- `Git Dirty Alert: Open Settings`
+
+## Settings Screen
+Open Command Palette and run `Git Dirty Alert: Open Settings` to edit tiers and colors.
 
 ## Debug
 - Open Settings and enable `gitDirtyAlert.debug`

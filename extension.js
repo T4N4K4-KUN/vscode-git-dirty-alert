@@ -82,6 +82,199 @@ function execGit(args, cwd) {
   });
 }
 
+function getNonce() {
+  let text = '';
+  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  for (let i = 0; i < 32; i += 1) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+}
+
+function getSettingsHtml() {
+  const nonce = getNonce();
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-${nonce}';">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git Dirty Alert Settings</title>
+  <style>
+    body { font-family: sans-serif; padding: 16px; }
+    fieldset { margin: 12px 0; padding: 12px; }
+    legend { font-weight: 600; }
+    label { display: block; margin: 6px 0; }
+    .row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .row > div { min-width: 220px; }
+    .actions { margin-top: 16px; }
+    .error { color: #c00; margin-top: 8px; }
+    input[type="number"] { width: 80px; }
+  </style>
+</head>
+<body>
+  <h2>Git Dirty Alert Settings</h2>
+  <div class="row">
+    <div>
+      <label>Polling seconds <input id="pollingSeconds" type="number" min="10"></label>
+      <label><input id="includeUntracked" type="checkbox"> Include untracked</label>
+      <label><input id="applyColorCustomizations" type="checkbox"> Apply color customizations</label>
+      <label><input id="debug" type="checkbox"> Debug output</label>
+    </div>
+  </div>
+
+  <fieldset>
+    <legend>Tier 1</legend>
+    <label><input type="checkbox" data-tier="tier1" data-type="ahead"> ahead</label>
+    <label><input type="checkbox" data-tier="tier1" data-type="behind"> behind</label>
+    <label><input type="checkbox" data-tier="tier1" data-type="uncommitted"> uncommitted</label>
+    <label>Background <input type="text" id="tier1Bg"></label>
+    <label>Foreground <input type="text" id="tier1Fg"></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Tier 2</legend>
+    <label><input type="checkbox" data-tier="tier2" data-type="ahead"> ahead</label>
+    <label><input type="checkbox" data-tier="tier2" data-type="behind"> behind</label>
+    <label><input type="checkbox" data-tier="tier2" data-type="uncommitted"> uncommitted</label>
+    <label>Background <input type="text" id="tier2Bg"></label>
+    <label>Foreground <input type="text" id="tier2Fg"></label>
+  </fieldset>
+
+  <fieldset>
+    <legend>Tier 3</legend>
+    <label><input type="checkbox" data-tier="tier3" data-type="ahead"> ahead</label>
+    <label><input type="checkbox" data-tier="tier3" data-type="behind"> behind</label>
+    <label><input type="checkbox" data-tier="tier3" data-type="uncommitted"> uncommitted</label>
+    <label>Background <input type="text" id="tier3Bg"></label>
+    <label>Foreground <input type="text" id="tier3Fg"></label>
+  </fieldset>
+
+  <div class="actions">
+    <button id="save">Save</button>
+    <div class="error" id="error"></div>
+  </div>
+
+  <script nonce="${nonce}">
+    const vscode = acquireVsCodeApi();
+    const error = document.getElementById('error');
+    const tierTypeBoxes = document.querySelectorAll('input[data-tier][data-type]');
+
+    function setTierTypes(tier, types) {
+      tierTypeBoxes.forEach((box) => {
+        if (box.dataset.tier === tier) {
+          box.checked = types.includes(box.dataset.type);
+        }
+      });
+    }
+
+    function getTierTypes(tier) {
+      const types = [];
+      tierTypeBoxes.forEach((box) => {
+        if (box.dataset.tier === tier && box.checked) {
+          types.push(box.dataset.type);
+        }
+      });
+      return types;
+    }
+
+    function loadConfig(cfg) {
+      document.getElementById('pollingSeconds').value = cfg.pollingSeconds;
+      document.getElementById('includeUntracked').checked = cfg.includeUntracked;
+      document.getElementById('applyColorCustomizations').checked = cfg.applyColorCustomizations;
+      document.getElementById('debug').checked = cfg.debug;
+
+      setTierTypes('tier1', cfg.tiers.tier1.types);
+      setTierTypes('tier2', cfg.tiers.tier2.types);
+      setTierTypes('tier3', cfg.tiers.tier3.types);
+
+      document.getElementById('tier1Bg').value = cfg.tiers.tier1.backgroundColor || '';
+      document.getElementById('tier1Fg').value = cfg.tiers.tier1.foregroundColor || '';
+      document.getElementById('tier2Bg').value = cfg.tiers.tier2.backgroundColor || '';
+      document.getElementById('tier2Fg').value = cfg.tiers.tier2.foregroundColor || '';
+      document.getElementById('tier3Bg').value = cfg.tiers.tier3.backgroundColor || '';
+      document.getElementById('tier3Fg').value = cfg.tiers.tier3.foregroundColor || '';
+    }
+
+    document.getElementById('save').addEventListener('click', () => {
+      error.textContent = '';
+      const tiers = {
+        tier1: {
+          types: getTierTypes('tier1'),
+          backgroundColor: document.getElementById('tier1Bg').value.trim(),
+          foregroundColor: document.getElementById('tier1Fg').value.trim()
+        },
+        tier2: {
+          types: getTierTypes('tier2'),
+          backgroundColor: document.getElementById('tier2Bg').value.trim(),
+          foregroundColor: document.getElementById('tier2Fg').value.trim()
+        },
+        tier3: {
+          types: getTierTypes('tier3'),
+          backgroundColor: document.getElementById('tier3Bg').value.trim(),
+          foregroundColor: document.getElementById('tier3Fg').value.trim()
+        }
+      };
+
+      const total = tiers.tier1.types.length + tiers.tier2.types.length + tiers.tier3.types.length;
+      if (total === 0) {
+        error.textContent = 'At least one alert type must be selected.';
+        return;
+      }
+
+      vscode.postMessage({
+        type: 'save',
+        config: {
+          pollingSeconds: Number(document.getElementById('pollingSeconds').value),
+          includeUntracked: document.getElementById('includeUntracked').checked,
+          applyColorCustomizations: document.getElementById('applyColorCustomizations').checked,
+          debug: document.getElementById('debug').checked,
+          tiers
+        }
+      });
+    });
+
+    window.addEventListener('message', (event) => {
+      const message = event.data;
+      if (message.type === 'init') {
+        loadConfig(message.config);
+      }
+      if (message.type === 'error') {
+        error.textContent = message.message;
+      }
+    });
+  </script>
+</body>
+</html>`;
+}
+
+async function getCurrentSettings() {
+  const config = vscode.workspace.getConfiguration('gitDirtyAlert');
+  return {
+    pollingSeconds: Number(config.get('pollingSeconds', 30)) || 30,
+    includeUntracked: config.get('includeUntracked', true),
+    applyColorCustomizations: config.get('applyColorCustomizations', true),
+    debug: config.get('debug', false),
+    tiers: config.get('tiers', DEFAULT_TIERS.reduce((acc, tier, index) => {
+      acc[`tier${index + 1}`] = {
+        types: tier.types.slice(),
+        backgroundColor: tier.backgroundColor,
+        foregroundColor: tier.foregroundColor,
+      };
+      return acc;
+    }, {})),
+  };
+}
+
+async function applySettings(config) {
+  const settings = vscode.workspace.getConfiguration('gitDirtyAlert');
+  await settings.update('pollingSeconds', config.pollingSeconds, vscode.ConfigurationTarget.Global);
+  await settings.update('includeUntracked', config.includeUntracked, vscode.ConfigurationTarget.Global);
+  await settings.update('applyColorCustomizations', config.applyColorCustomizations, vscode.ConfigurationTarget.Global);
+  await settings.update('debug', config.debug, vscode.ConfigurationTarget.Global);
+  await settings.update('tiers', config.tiers, vscode.ConfigurationTarget.Global);
+}
+
 async function getDirtyCountForFolder(folderPath, includeUntracked, debug) {
   const args = ['status', '--porcelain'];
   if (!includeUntracked) {
@@ -333,6 +526,28 @@ function activate(context) {
   context.subscriptions.push(statusItem);
   context.subscriptions.push(vscode.commands.registerCommand('gitDirtyAlert.openScm', () => {
     vscode.commands.executeCommand('workbench.view.scm');
+  }));
+  context.subscriptions.push(vscode.commands.registerCommand('gitDirtyAlert.openSettings', async () => {
+    const panel = vscode.window.createWebviewPanel(
+      'gitDirtyAlertSettings',
+      'Git Dirty Alert Settings',
+      vscode.ViewColumn.One,
+      { enableScripts: true }
+    );
+    panel.webview.html = getSettingsHtml();
+    panel.webview.onDidReceiveMessage(async (message) => {
+      if (message.type === 'save') {
+        try {
+          await applySettings(message.config);
+          await applyColorCustomizations();
+          refreshStatus();
+        } catch (err) {
+          panel.webview.postMessage({ type: 'error', message: String(err) });
+        }
+      }
+    });
+    const current = await getCurrentSettings();
+    panel.webview.postMessage({ type: 'init', config: current });
   }));
 
   context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(refreshStatus));
