@@ -24,3 +24,7 @@ Show a red status bar indicator in VSCode when your working tree has uncommitted
 - Open `View > Output` and select `Git Dirty Alert`
 - Edit a file to see log lines like `git status in <path>: <N> changes`
 
+## Install
+- Run `cmd /c "set PATH=C:\\Program Files\\nodejs;%APPDATA%\\npm;%PATH% && vsce package"`
+- In VSCode: Extensions view > ... > Install from VSIX > select `vscode-git-dirty-alert-0.1.0.vsix`
+
