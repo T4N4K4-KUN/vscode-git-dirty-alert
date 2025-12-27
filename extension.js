@@ -92,7 +92,7 @@ function startPolling() {
   }
 
   const config = vscode.workspace.getConfiguration('gitDirtyAlert');
-  const seconds = Math.max(10, Number(config.get('pollingSeconds', 120)) || 120);
+  const seconds = Math.max(10, Number(config.get('pollingSeconds', 30)) || 30);
   intervalId = setInterval(refreshStatus, seconds * 1000);
 }
 

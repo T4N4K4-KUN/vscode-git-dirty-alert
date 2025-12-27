@@ -13,7 +13,7 @@ Show a red status bar indicator in VSCode when your working tree has uncommitted
 3. Make a change in a git repo to see the badge.
 
 ## Settings
-- `gitDirtyAlert.pollingSeconds` (default: 120)
+- `gitDirtyAlert.pollingSeconds` (default: 30, min: 10, recommended: 30+)
 - `gitDirtyAlert.includeUntracked` (default: true)
 
 ## Command
@@ -27,4 +27,3 @@ Show a red status bar indicator in VSCode when your working tree has uncommitted
 ## Install
 - Run `cmd /c "set PATH=C:\\Program Files\\nodejs;%APPDATA%\\npm;%PATH% && vsce package"`
 - In VSCode: Extensions view > ... > Install from VSIX > select `vscode-git-dirty-alert-0.2.0.vsix`
-
