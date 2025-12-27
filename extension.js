@@ -3,31 +3,47 @@ const cp = require('child_process');
 
 let statusItem = null;
 let intervalId = null;
+let output = null;
+
+function logDebug(msg) {
+  if (!output) {
+    return;
+  }
+  const time = new Date().toISOString();
+  output.appendLine(`[${time}] ${msg}`);
+}
 
 function execGit(args, cwd) {
   return new Promise((resolve) => {
     cp.execFile('git', args, { cwd }, (err, stdout, stderr) => {
       if (err) {
-        resolve(null);
+        resolve({ ok: false, out: String(stdout || '') + String(stderr || ''), err });
         return;
       }
-      resolve(String(stdout || '') + String(stderr || ''));
+      resolve({ ok: true, out: String(stdout || '') + String(stderr || ''), err: null });
     });
   });
 }
 
-async function getDirtyCountForFolder(folderPath, includeUntracked) {
+async function getDirtyCountForFolder(folderPath, includeUntracked, debug) {
   const args = ['status', '--porcelain'];
   if (!includeUntracked) {
     args.push('--untracked-files=no');
   }
 
-  const out = await execGit(args, folderPath);
-  if (!out) {
+  const res = await execGit(args, folderPath);
+  if (!res.ok) {
+    if (debug) {
+      logDebug(`git status failed in ${folderPath}: ${res.out}`);
+    }
     return 0;
   }
 
-  return out.split(/\r?\n/).filter(Boolean).length;
+  const lines = res.out.split(/\r?\n/).filter(Boolean);
+  if (debug) {
+    logDebug(`git status in ${folderPath}: ${lines.length} changes`);
+  }
+  return lines.length;
 }
 
 async function refreshStatus() {
@@ -43,10 +59,15 @@ async function refreshStatus() {
 
   const config = vscode.workspace.getConfiguration('gitDirtyAlert');
   const includeUntracked = config.get('includeUntracked', true);
+  const debug = config.get('debug', false);
+
+  if (debug && output) {
+    output.show(true);
+  }
 
   let total = 0;
   for (const folder of folders) {
-    total += await getDirtyCountForFolder(folder.uri.fsPath, includeUntracked);
+    total += await getDirtyCountForFolder(folder.uri.fsPath, includeUntracked, debug);
   }
 
   if (total > 0) {
@@ -72,9 +93,11 @@ function startPolling() {
 }
 
 function activate(context) {
+  output = vscode.window.createOutputChannel('Git Dirty Alert');
   statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
   statusItem.command = 'gitDirtyAlert.openScm';
 
+  context.subscriptions.push(output);
   context.subscriptions.push(statusItem);
   context.subscriptions.push(vscode.commands.registerCommand('gitDirtyAlert.openScm', () => {
     vscode.commands.executeCommand('workbench.view.scm');
@@ -104,6 +127,10 @@ function deactivate() {
   if (statusItem) {
     statusItem.dispose();
     statusItem = null;
+  }
+  if (output) {
+    output.dispose();
+    output = null;
   }
 }
 
