@@ -1,0 +1,39 @@
+# REPO DUMP (for LLM review)
+repo_root: C:\Users\ryoki\Documents\GitHub\vscode-git-dirty-alert
+git_remote_v:
+
+git_status_sb:
+## No commits yet on master
+?? .gitignore
+?? README.md
+?? docs/
+?? extension.js
+?? package.json
+?? repo_dump.txt
+?? scripts/
+?? tools/
+git_head:
+HEAD
+fatal: ambiguous argument 'HEAD': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+git_status_porcelain:
+?? .gitignore
+?? README.md
+?? docs/
+?? extension.js
+?? package.json
+?? repo_dump.txt
+?? scripts/
+?? tools/
+
+# git diff
+(no diff)
+
+# file list (tracked)
+
+
+# SUMMARY
+text_files: 0
+binary_or_omitted_files: 0
+skipped_files: 0
