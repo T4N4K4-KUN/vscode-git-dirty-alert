@@ -2,7 +2,7 @@
   "name": "vscode-git-dirty-alert",
   "displayName": "Git Dirty Alert",
   "description": "Show a red status bar indicator when the working tree has uncommitted changes.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "t4n4k4-kun",
   "engines": {
     "vscode": "^1.85.0"

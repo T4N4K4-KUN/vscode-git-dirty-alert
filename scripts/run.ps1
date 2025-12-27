@@ -1,5 +1,5 @@
 param(
-  [ValidateSet("dump", "devhost", "vsix")]
+  [ValidateSet("dump", "devhost", "vsix", "apply")]
   [string]$Mode = "dump"
 )
 
@@ -24,8 +24,35 @@ if ($Mode -eq "vsix") {
     throw "cmd.exe not found."
   }
 
-  $cmdLine = 'set PATH=C:\Program Files\nodejs;%APPDATA%\npm;%PATH% && vsce package'
+  $cmdLine = 'set PATH=C:\\Program Files\\nodejs;%APPDATA%\\npm;%PATH% && vsce package'
   & $cmd.Path /c $cmdLine
+  exit $LASTEXITCODE
+}
+
+if ($Mode -eq "apply") {
+  $cmd = Get-Command cmd -ErrorAction SilentlyContinue
+  if (-not $cmd) {
+    throw "cmd.exe not found."
+  }
+
+  $code = Get-Command code -ErrorAction SilentlyContinue
+  if (-not $code) {
+    throw "VSCode CLI 'code' not found in PATH."
+  }
+
+  $cmdLine = 'set PATH=C:\\Program Files\\nodejs;%APPDATA%\\npm;%PATH% && vsce package'
+  & $cmd.Path /c $cmdLine
+  if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+  }
+
+  $pkg = Get-Content -Path package.json | ConvertFrom-Json
+  $vsix = "vscode-git-dirty-alert-$($pkg.version).vsix"
+  if (-not (Test-Path $vsix)) {
+    throw "VSIX not found: $vsix"
+  }
+
+  & $code.Path --install-extension $vsix --force
   exit $LASTEXITCODE
 }
 
