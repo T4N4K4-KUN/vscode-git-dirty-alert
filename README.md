@@ -33,13 +33,13 @@ Default:
     },
     "tier2": {
       "types": ["behind"],
-      "backgroundColor": "statusBarItem.warningBackground",
-      "foregroundColor": "statusBarItem.warningForeground"
+      "backgroundColor": "gitDirtyAlert.tier2Background",
+      "foregroundColor": "gitDirtyAlert.tier2Foreground"
     },
     "tier3": {
       "types": ["uncommitted"],
-      "backgroundColor": "statusBarItem.prominentBackground",
-      "foregroundColor": "statusBarItem.prominentForeground"
+      "backgroundColor": "gitDirtyAlert.tier3Background",
+      "foregroundColor": "gitDirtyAlert.tier3Foreground"
     }
   }
 }
