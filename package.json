@@ -30,14 +30,14 @@
       "properties": {
         "gitDirtyAlert.pollingSeconds": {
           "type": "number",
-          "default": 30,
+          "default": 60,
           "minimum": 10,
           "description": "Polling interval in seconds for checking git status.",
-          "markdownDescription": "Polling interval in seconds for checking git status. Min: 10, recommended: 30+."
+          "markdownDescription": "Polling interval in seconds for checking git status. Min: 10, recommended: 60+."
         },
         "gitDirtyAlert.includeUntracked": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "Include untracked files in the dirty count."
         },
         "gitDirtyAlert.debug": {

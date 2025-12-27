@@ -251,8 +251,8 @@ function getSettingsHtml() {
 async function getCurrentSettings() {
   const config = vscode.workspace.getConfiguration('gitDirtyAlert');
   return {
-    pollingSeconds: Number(config.get('pollingSeconds', 30)) || 30,
-    includeUntracked: config.get('includeUntracked', true),
+    pollingSeconds: Number(config.get('pollingSeconds', 60)) || 60,
+    includeUntracked: config.get('includeUntracked', false),
     applyColorCustomizations: config.get('applyColorCustomizations', true),
     debug: config.get('debug', false),
     tiers: config.get('tiers', DEFAULT_TIERS.reduce((acc, tier, index) => {
@@ -479,7 +479,7 @@ function startPolling() {
   }
 
   const config = vscode.workspace.getConfiguration('gitDirtyAlert');
-  const seconds = Math.max(10, Number(config.get('pollingSeconds', 30)) || 30);
+  const seconds = Math.max(10, Number(config.get('pollingSeconds', 60)) || 60);
   intervalId = setInterval(refreshStatus, seconds * 1000);
 }
 

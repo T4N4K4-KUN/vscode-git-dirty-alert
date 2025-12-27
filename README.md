@@ -15,8 +15,8 @@ Show a status bar alert in VSCode for remote divergence and uncommitted changes.
 3. Make a change in a git repo to see the badge.
 
 ## Settings
-- `gitDirtyAlert.pollingSeconds` (default: 30, min: 10, recommended: 30+)
-- `gitDirtyAlert.includeUntracked` (default: true)
+- `gitDirtyAlert.pollingSeconds` (default: 60, min: 10, recommended: 60+)
+- `gitDirtyAlert.includeUntracked` (default: false)
 - `gitDirtyAlert.applyColorCustomizations` (default: true)
 - `gitDirtyAlert.tiers` (tier rules and colors)
 
