@@ -5,3 +5,4 @@ __pycache__/
 *.pyc
 playwright-report/
 node_modules/
+*.vsix
