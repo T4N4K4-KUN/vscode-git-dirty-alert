@@ -67,8 +67,8 @@
               "types": [
                 "uncommitted"
               ],
-              "backgroundColor": "statusBarItem.activeBackground",
-              "foregroundColor": "statusBarItem.activeForeground"
+              "backgroundColor": "statusBarItem.warningBackground",
+              "foregroundColor": "statusBarItem.warningForeground"
             }
           },
           "description": "Alert tiers. Each tier defines which alert types trigger it and the colors to use.",
@@ -156,12 +156,12 @@
                 },
                 "backgroundColor": {
                   "type": "string",
-                  "default": "statusBarItem.activeBackground",
+                  "default": "statusBarItem.warningBackground",
                   "description": "Theme color id for Tier 3 background."
                 },
                 "foregroundColor": {
                   "type": "string",
-                  "default": "statusBarItem.activeForeground",
+                  "default": "statusBarItem.warningForeground",
                   "description": "Theme color id for Tier 3 foreground."
                 }
               }

@@ -22,8 +22,8 @@ const DEFAULT_TIERS = [
   {
     name: 'Tier3',
     types: ['uncommitted'],
-    backgroundColor: 'statusBarItem.activeBackground',
-    foregroundColor: 'statusBarItem.activeForeground',
+    backgroundColor: 'statusBarItem.warningBackground',
+    foregroundColor: 'statusBarItem.warningForeground',
   },
 ];
 
@@ -48,9 +48,19 @@ const LEGACY_DEFAULTS = {
 const COLOR_DEFAULTS = {
   'statusBarItem.warningBackground': '#d9822b',
   'statusBarItem.warningForeground': '#ffffff',
-  'statusBarItem.activeBackground': '#f2c94c',
-  'statusBarItem.activeForeground': '#000000',
 };
+
+const WARNING_COLOR_BY_TIER = {
+  Tier2: {
+    background: '#d9822b',
+    foreground: '#ffffff',
+  },
+  Tier3: {
+    background: '#f2c94c',
+    foreground: '#000000',
+  },
+};
+let lastWarningColorKey = null;
 
 function logDebug(msg) {
   if (!output) {
@@ -221,6 +231,7 @@ async function refreshStatus() {
         `tier selected: ${tier.name} (bg: ${tier.backgroundColor || 'none'}, fg: ${tier.foregroundColor || 'none'})`
       );
     }
+    await ensureWarningColorsForTier(tier.name, debug);
     statusItem.text = `$(git-commit) A:${totalAhead} B:${totalBehind} U:${totalUncommitted}`;
     const lines = perRepo.map(
       (r) => `${r.name}: ahead ${r.ahead}, behind ${r.behind}, uncommitted ${r.uncommitted}`
@@ -273,6 +284,44 @@ async function applyColorCustomizations() {
   } else if (debug) {
     logDebug('Workbench colorCustomizations already set for tier colors.');
   }
+}
+
+async function ensureWarningColorsForTier(tierName, debug) {
+  const desired = WARNING_COLOR_BY_TIER[tierName];
+  if (!desired) {
+    return;
+  }
+  if (lastWarningColorKey === tierName) {
+    return;
+  }
+
+  const config = vscode.workspace.getConfiguration('gitDirtyAlert');
+  const enable = config.get('applyColorCustomizations', true);
+  if (!enable) {
+    return;
+  }
+
+  const workbenchConfig = vscode.workspace.getConfiguration('workbench');
+  const current = workbenchConfig.get('colorCustomizations') || {};
+  const next = { ...current };
+  let updated = false;
+
+  if (next['statusBarItem.warningBackground'] !== desired.background) {
+    next['statusBarItem.warningBackground'] = desired.background;
+    updated = true;
+  }
+  if (next['statusBarItem.warningForeground'] !== desired.foreground) {
+    next['statusBarItem.warningForeground'] = desired.foreground;
+    updated = true;
+  }
+
+  if (updated) {
+    await workbenchConfig.update('colorCustomizations', next, vscode.ConfigurationTarget.Global);
+    if (debug) {
+      logDebug(`Updated warning colors for ${tierName}.`);
+    }
+  }
+  lastWarningColorKey = tierName;
 }
 
 function activate(context) {
