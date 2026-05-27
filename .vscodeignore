@@ -1,6 +1,9 @@
 .git/**
 .github/**
 .vscode/**
+.gitattributes
+.gitignore
+AGENTS.md
 docs/**
 runs/**
 scripts/**

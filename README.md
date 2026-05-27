@@ -1,63 +1,69 @@
-# vscode-git-dirty-alert
+# Git Simple Alert
 
-Show a status bar alert in VSCode for remote divergence and uncommitted changes.
+Git Simple Alert is a small VS Code extension for people who want Git state changes to be harder to miss.
+
+VS Code already shows Git status in the status bar. This extension keeps that idea simple, but adds a colored alert for uncommitted changes and branch divergence.
 
 ## Features
-- Tiered status bar alerts for `ahead`, `behind`, and `uncommitted`
-- Highest-priority tier color is shown in the status bar
-- Tooltip shows all three counts per repo
-- Click the badge to open Source Control
-- Polling interval is configurable
 
-## Usage
-1. Open this folder in VSCode.
-2. Press F5 to run the extension in an Extension Development Host.
-3. Make a change in a git repo to see the badge.
+- Persistent status bar icon for quick access
+- Colored alerts for `ahead`, `behind`, and `uncommitted`
+- Alert text shows `A/B/U` counts only when something needs attention
+- Tooltip shows totals and per-repository details
+- Click the status bar item to watch remote, open Source Control, or open settings
+- Optional remote fetch polling for detecting `behind`
+- Short manual watch mode for moments when you expect a remote update soon
 
-## Settings
-- `gitDirtyAlert.pollingSeconds` (default: 60, min: 10, recommended: 60+)
-- `gitDirtyAlert.includeUntracked` (default: false)
-- `gitDirtyAlert.applyColorCustomizations` (default: true)
-- `gitDirtyAlert.tiers` (tier rules and colors)
+## Status Bar
 
-### Tiers
-Each tier chooses alert types and colors. The highest tier that matches is used.
+Normal state:
 
-Default:
-```json
-{
-  "gitDirtyAlert.tiers": {
-    "tier1": {
-      "types": ["ahead", "uncommitted"],
-      "backgroundColor": "statusBarItem.errorBackground",
-      "foregroundColor": "statusBarItem.errorForeground"
-    },
-    "tier2": {
-      "types": ["behind"],
-      "backgroundColor": "statusBarItem.warningBackground",
-      "foregroundColor": "statusBarItem.warningForeground"
-    },
-    "tier3": {
-      "types": [],
-      "backgroundColor": "statusBarItem.warningBackground",
-      "foregroundColor": "statusBarItem.warningForeground"
-    }
-  }
-}
+```text
+$(sync-ignored)
 ```
 
-## Command
-- `Git Dirty Alert: Open Source Control`
-- `Git Dirty Alert: Open Settings`
+Alert state:
 
-## Settings Screen
-Open Command Palette and run `Git Dirty Alert: Open Settings` to edit tiers and colors.
+```text
+$(sync-ignored) A:0 B:1 U:0
+```
 
-## Debug
-- Open Settings and enable `gitDirtyAlert.debug`
-- Open `View > Output` and select `Git Dirty Alert`
-- Edit a file to see log lines like `git status in <path>: <N> changes`
+`A` means ahead, `B` means behind, and `U` means uncommitted.
 
-## Install
-- Run `cmd /c "set PATH=C:\\Program Files\\nodejs;%APPDATA%\\npm;%PATH% && vsce package"`
-- In VSCode: Extensions view > ... > Install from VSIX > select `vscode-git-dirty-alert-0.2.0.vsix`
+## Commands
+
+- `Git Simple Alert: Watch Remote Now`
+- `Git Simple Alert: Open Source Control`
+- `Git Simple Alert: Open Settings`
+
+## Settings
+
+- `gitSimpleAlert.pollingSeconds` (default: 30, min: 10)
+- `gitSimpleAlert.fetchIntervalSeconds` (default: 60, min: 15)
+- `gitSimpleAlert.watchDurationSeconds` (default: 60, min: 15)
+- `gitSimpleAlert.watchFetchIntervalSeconds` (default: 10, min: 5)
+- `gitSimpleAlert.watchCooldownSeconds` (default: 15, min: 5)
+- `gitSimpleAlert.includeUntracked` (default: false)
+- `gitSimpleAlert.applyColorCustomizations` (default: true)
+- `gitSimpleAlert.debug` (default: false)
+- `gitSimpleAlert.tiers` (tier rules and colors)
+
+## Remote Checks
+
+`behind` detection depends on local remote-tracking refs. VS Code's `git.autofetch` can update those refs, and Git Simple Alert can also run its own lightweight fetch:
+
+```text
+git fetch --no-tags --quiet
+```
+
+Use `Watch Remote Now` when you expect someone to push soon. It temporarily fetches more frequently without making aggressive fetch intervals the normal behavior.
+
+## Development Install
+
+Package locally and install the generated VSIX:
+
+```powershell
+npx @vscode/vsce package
+```
+
+Then use VS Code's Extensions view: `... > Install from VSIX`.

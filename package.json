@@ -1,7 +1,7 @@
 {
-  "name": "vscode-git-dirty-alert",
-  "displayName": "Git Dirty Alert",
-  "description": "Show a status bar alert for remote divergence and uncommitted changes.",
+  "name": "git-simple-alert",
+  "displayName": "Git Simple Alert",
+  "description": "A simple visible status bar alert for Git changes that are easy to miss.",
   "version": "0.2.0",
   "publisher": "t4n4k4-kun",
   "engines": {
@@ -17,45 +17,75 @@
   "contributes": {
     "commands": [
       {
-        "command": "gitDirtyAlert.openScm",
-        "title": "Git Dirty Alert: Open Source Control"
+        "command": "gitSimpleAlert.watchRemoteNow",
+        "title": "Git Simple Alert: Watch Remote Now"
       },
       {
-        "command": "gitDirtyAlert.openSettings",
-        "title": "Git Dirty Alert: Open Settings"
+        "command": "gitSimpleAlert.openScm",
+        "title": "Git Simple Alert: Open Source Control"
+      },
+      {
+        "command": "gitSimpleAlert.openSettings",
+        "title": "Git Simple Alert: Open Settings"
       }
     ],
     "configuration": {
-      "title": "Git Dirty Alert",
+      "title": "Git Simple Alert",
       "properties": {
-        "gitDirtyAlert.pollingSeconds": {
+        "gitSimpleAlert.pollingSeconds": {
           "type": "number",
-          "default": 60,
+          "default": 30,
           "minimum": 10,
           "description": "Polling interval in seconds for checking git status.",
-          "markdownDescription": "Polling interval in seconds for checking git status. Min: 10, recommended: 60+."
+          "markdownDescription": "Polling interval in seconds for checking local git status. Min: 10, recommended: 30+."
         },
-        "gitDirtyAlert.includeUntracked": {
+        "gitSimpleAlert.fetchIntervalSeconds": {
+          "type": "number",
+          "default": 60,
+          "minimum": 15,
+          "description": "Interval in seconds for fetching remote refs.",
+          "markdownDescription": "Interval in seconds for running `git fetch --no-tags --quiet`. Min: 15, recommended: 60+."
+        },
+        "gitSimpleAlert.watchDurationSeconds": {
+          "type": "number",
+          "default": 60,
+          "minimum": 15,
+          "description": "Duration in seconds for Watch Remote Now mode."
+        },
+        "gitSimpleAlert.watchFetchIntervalSeconds": {
+          "type": "number",
+          "default": 10,
+          "minimum": 5,
+          "description": "Fetch interval in seconds while Watch Remote Now mode is active."
+        },
+        "gitSimpleAlert.watchCooldownSeconds": {
+          "type": "number",
+          "default": 15,
+          "minimum": 5,
+          "description": "Initial cooldown in seconds for Watch Remote Now."
+        },
+        "gitSimpleAlert.includeUntracked": {
           "type": "boolean",
           "default": false,
           "description": "Include untracked files in the dirty count."
         },
-        "gitDirtyAlert.debug": {
+        "gitSimpleAlert.debug": {
           "type": "boolean",
           "default": false,
           "description": "Enable debug logging to the Output panel."
         },
-        "gitDirtyAlert.applyColorCustomizations": {
+        "gitSimpleAlert.applyColorCustomizations": {
           "type": "boolean",
           "default": true,
           "description": "Auto-apply workbench color customizations for tier colors when missing."
         },
-        "gitDirtyAlert.tiers": {
+        "gitSimpleAlert.tiers": {
           "type": "object",
           "default": {
             "tier1": {
               "types": [
-                "ahead"
+                "ahead",
+                "uncommitted"
               ],
               "backgroundColor": "statusBarItem.errorBackground",
               "foregroundColor": "statusBarItem.errorForeground"
@@ -68,9 +98,7 @@
               "foregroundColor": "statusBarItem.warningForeground"
             },
             "tier3": {
-              "types": [
-                "uncommitted"
-              ],
+              "types": [],
               "backgroundColor": "statusBarItem.warningBackground",
               "foregroundColor": "statusBarItem.warningForeground"
             }
@@ -84,7 +112,8 @@
                 "types": {
                   "type": "array",
                   "default": [
-                    "ahead"
+                    "ahead",
+                    "uncommitted"
                   ],
                   "items": {
                     "type": "string",
@@ -145,9 +174,7 @@
               "properties": {
                 "types": {
                   "type": "array",
-                  "default": [
-                    "uncommitted"
-                  ],
+                  "default": [],
                   "items": {
                     "type": "string",
                     "enum": [

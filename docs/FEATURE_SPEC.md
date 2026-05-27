@@ -269,11 +269,11 @@ README should explain:
 
 ## Settings Prefix
 
-Rename settings from `gitDirtyAlert.*` to `gitSimpleAlert.*` before Marketplace publication.
+Use `gitSimpleAlert.*` for settings before Marketplace publication.
 
 Migration:
 
-- Since the extension has not been published to Marketplace, a breaking settings rename is acceptable.
+- Since the extension has not been published to Marketplace, the rename from the earlier local `gitDirtyAlert.*` prefix is acceptable.
 - Local VSIX users may need to update settings manually.
 
 ## Implementation Notes
