@@ -157,10 +157,8 @@ Use `docs/FEATURE_SPEC.md` as the product behavior source of truth before implem
 
 Before the recommended first public release, fix or verify:
 
-- Rename the extension from `Git Dirty Alert` to `Git Simple Alert`.
-- Rename Marketplace package and settings prefix before publication.
 - Align default tier settings across `package.json`, `extension.js`, and `README.md`.
-- Align `gitDirtyAlert.includeUntracked` defaults across all code paths.
+- Align `gitSimpleAlert.includeUntracked` defaults across all code paths.
 - Reconsider `activationEvents: ["*"]`; use the least broad activation that still gives good UX.
 - Handle missing `git` with a user-friendly status or debug message.
 - Ignore non-Git folders quietly.

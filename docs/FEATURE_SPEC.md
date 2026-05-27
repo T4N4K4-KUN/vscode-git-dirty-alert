@@ -72,7 +72,6 @@ Normal tooltip:
 
 ```text
 Git Simple Alert
-
 No alerts.
 Click to watch remote or open Source Control.
 ```
@@ -93,11 +92,8 @@ Alert tooltip:
 
 ```text
 Git Simple Alert
-
 Ahead: 0  Behind: 1  Uncommitted: 0
-
 [repo-name] A:0 B:1 U:0
-
 Click for actions.
 ```
 
@@ -204,10 +200,8 @@ Watch tooltip example:
 
 ```text
 Git Simple Alert
-
 Watching remote for 42s.
 No alerts.
-
 Click for actions.
 ```
 
@@ -215,10 +209,8 @@ Cooldown tooltip example:
 
 ```text
 Git Simple Alert
-
 Remote watch cooling down for 12s.
 No alerts.
-
 Click for actions.
 ```
 
@@ -269,11 +261,11 @@ README should explain:
 
 ## Settings Prefix
 
-Rename settings from `gitDirtyAlert.*` to `gitSimpleAlert.*` before Marketplace publication.
+Use `gitSimpleAlert.*` for settings before Marketplace publication.
 
 Migration:
 
-- Since the extension has not been published to Marketplace, a breaking settings rename is acceptable.
+- Since the extension has not been published to Marketplace, the rename from the earlier local `gitDirtyAlert.*` prefix is acceptable.
 - Local VSIX users may need to update settings manually.
 
 ## Implementation Notes
