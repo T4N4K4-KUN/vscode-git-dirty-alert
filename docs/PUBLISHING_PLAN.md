@@ -1,6 +1,6 @@
 # Publishing Plan
 
-This document defines the finishing plan for publishing Git Dirty Alert as:
+This document defines the finishing plan for publishing Git Simple Alert as:
 
 - a public GitHub repository
 - a Visual Studio Marketplace extension
@@ -148,18 +148,24 @@ The Marketplace description should be clear about:
 - what `ahead`, `behind`, and `uncommitted` mean
 - whether untracked files are counted by default
 - how polling works
+- how remote fetch and manual watch mode work
 - how the extension behaves in multi-root workspaces
+
+Use `docs/FEATURE_SPEC.md` as the product behavior source of truth before implementation.
 
 ## Implementation Hardening
 
 Before the recommended first public release, fix or verify:
 
+- Rename the extension from `Git Dirty Alert` to `Git Simple Alert`.
+- Rename Marketplace package and settings prefix before publication.
 - Align default tier settings across `package.json`, `extension.js`, and `README.md`.
 - Align `gitDirtyAlert.includeUntracked` defaults across all code paths.
 - Reconsider `activationEvents: ["*"]`; use the least broad activation that still gives good UX.
 - Handle missing `git` with a user-friendly status or debug message.
 - Ignore non-Git folders quietly.
 - Prevent overlapping refreshes when polling or file events happen close together.
+- Add remote fetch scheduling and manual watch mode.
 - Consider a timeout for slow `git status` calls.
 - Avoid surprising global `workbench.colorCustomizations` writes, or document and gate them clearly.
 - Ensure settings webview validation prevents invalid tier/color states.
@@ -187,6 +193,10 @@ Manual tests:
 - `includeUntracked=false`: untracked files are ignored.
 - `includeUntracked=true`: untracked files are counted.
 - Settings webview saves and refreshes status.
+- Status bar item remains visible with only the icon when there are no alerts.
+- Status bar click opens QuickPick actions.
+- Manual watch mode fetches remote state during the watch window.
+- Manual watch cooldown prevents repeated burst fetches.
 - Debug output appears only when enabled.
 
 OS matrix:
@@ -327,6 +337,7 @@ Goal: publish a reliable VS Code extension package that users can install from t
 
 Milestone 1: manifest and metadata
 
+- Rename package identity to `git-simple-alert` and `Git Simple Alert`.
 - Align default settings across `package.json`, `extension.js`, and `README.md`.
 - Add Marketplace metadata to `package.json`: `repository`, `bugs`, `homepage`, `keywords`, `license`, and optional `icon`.
 - Review `displayName`, `description`, `categories`, command titles, and configuration descriptions.
