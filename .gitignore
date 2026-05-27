@@ -6,3 +6,5 @@ __pycache__/
 *.pyc
 node_modules/
 *.vsix
+*.code-workspace
+test-results/
