@@ -72,7 +72,6 @@ Normal tooltip:
 
 ```text
 Git Simple Alert
-
 No alerts.
 Click to watch remote or open Source Control.
 ```
@@ -93,11 +92,8 @@ Alert tooltip:
 
 ```text
 Git Simple Alert
-
 Ahead: 0  Behind: 1  Uncommitted: 0
-
 [repo-name] A:0 B:1 U:0
-
 Click for actions.
 ```
 
@@ -204,10 +200,8 @@ Watch tooltip example:
 
 ```text
 Git Simple Alert
-
 Watching remote for 42s.
 No alerts.
-
 Click for actions.
 ```
 
@@ -215,10 +209,8 @@ Cooldown tooltip example:
 
 ```text
 Git Simple Alert
-
 Remote watch cooling down for 12s.
 No alerts.
-
 Click for actions.
 ```
 

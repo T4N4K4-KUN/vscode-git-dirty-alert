@@ -443,6 +443,10 @@ function getWatchStatusLine() {
   return '';
 }
 
+function compactTooltip(lines) {
+  return lines.filter((line) => line !== '').join('\n');
+}
+
 function normalizeTier(raw, fallback) {
   const hasRawTypes = raw && Object.prototype.hasOwnProperty.call(raw, 'types');
   const types = Array.isArray(raw?.types) ? raw.types.filter((t) => ALERT_TYPES.has(t)) : [];
@@ -606,14 +610,25 @@ async function refreshStatusInner() {
       `[${r.name}] ${displayOrder.map((t) => `${display.map[t].short}:${r[t]}`).join(' ')}`
     );
     const watchLine = getWatchStatusLine();
-    statusItem.tooltip = `${PRODUCT_NAME}\n\n${watchLine ? `${watchLine}\n` : ''}${display.header}\n\n${lines.join('\n')}\n\nClick for actions.`;
+    statusItem.tooltip = compactTooltip([
+      PRODUCT_NAME,
+      watchLine,
+      display.header,
+      ...lines,
+      'Click for actions.',
+    ]);
     statusItem.backgroundColor = tier.backgroundColor ? new vscode.ThemeColor(tier.backgroundColor) : undefined;
     statusItem.color = tier.foregroundColor ? new vscode.ThemeColor(tier.foregroundColor) : undefined;
     statusItem.show();
   } else {
     const watchLine = getWatchStatusLine();
     statusItem.text = STATUS_ICON;
-    statusItem.tooltip = `${PRODUCT_NAME}\n\n${watchLine ? `${watchLine}\n` : ''}No alerts.\nClick to watch remote or open Source Control.`;
+    statusItem.tooltip = compactTooltip([
+      PRODUCT_NAME,
+      watchLine,
+      'No alerts.',
+      'Click to watch remote or open Source Control.',
+    ]);
     statusItem.backgroundColor = undefined;
     statusItem.color = undefined;
     statusItem.show();
