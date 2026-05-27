@@ -1,0 +1,15 @@
+.git/**
+.github/**
+.vscode/**
+docs/**
+scripts/**
+tools/**
+out/**
+node_modules/**
+*.vsix
+*.code-workspace
+.env
+.venv/**
+__pycache__/**
+*.pyc
+repo_dump.txt
