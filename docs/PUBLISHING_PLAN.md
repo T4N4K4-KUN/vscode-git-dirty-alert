@@ -53,6 +53,8 @@ Before release, verify:
 
 Use a public GitHub repository.
 
+Use `docs/GIT_WORKFLOW.md` for day-to-day branch, pull request, and release operations.
+
 Recommended repository settings:
 
 - `main` is always releasable.
