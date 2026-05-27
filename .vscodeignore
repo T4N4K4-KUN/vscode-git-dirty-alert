@@ -2,10 +2,12 @@
 .github/**
 .vscode/**
 docs/**
+runs/**
 scripts/**
 tools/**
 out/**
 node_modules/**
+test-results/**
 *.vsix
 *.code-workspace
 .env

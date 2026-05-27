@@ -86,6 +86,38 @@ Roadmap:
 - GitHub Public Release Roadmap / repository cleanup
 ```
 
+## RUN-ID と作業記録
+
+このリポジトリでも「1タスク = 1 run」を基本にする。ただし public repo と Marketplace 公開を前提に、作業記録は公開価値のあるものだけを残す。
+
+RUN-ID:
+
+```text
+yyyymmdd-hhmmssSSS_<branch>
+```
+
+ブランチ名に `/` がある場合は `-` に置換する。
+
+例:
+
+```text
+20260527-142301123_chore-publish-prep
+20260527-151012045_fix-git-detection
+```
+
+使い分け:
+
+- `out/<run_id>/`: ローカル生成物、ログ、スクリーンショット、VSIX、検証中の一時ファイル。
+- `runs/<run_id>/`: 公開リポに残す価値がある要約、検証記録、release validation note。
+
+ルール:
+
+- `out/` は gitignore 対象。コミットしない。
+- `runs/` は必要なときだけ作る。毎回の作業ログを全部コミットしない。
+- 生ログを大量にコミットしない。必要なら Markdown に要約する。
+- 出力・ジャーナル類は上書きしない。新しい RUN-ID かタイムスタンプ付きファイルにする。
+- Marketplace パッケージには `runs/` も `out/` も含めない。
+
 ## main へのマージ条件
 
 最低限:
@@ -151,6 +183,17 @@ Marketplace 公開、GitHub public repo、MIT license の前提でリスクを�
 
 - `.vsix` はコミットしない。
 - `*.code-workspace` はコミットしない。
+- `out/` はコミットしない。
+- `runs/` は公開価値のある要約だけに絞る。
 - `docs/ai/` を公開する場合は、個人情報、ローカルパス、誤解を招くメモがないか確認する。
 - `workbench.colorCustomizations` を自動更新する挙動は、公開前に仕様として明確化する。
 - `git` CLI が見つからない環境、特に macOS GUI 起動時の PATH 問題を検証する。
+
+## 文字コードと改行
+
+マルチ OS での差分事故を減らすため、リポジトリ内のテキストは UTF-8 without BOM と LF を基本にする。
+
+- `.gitattributes` を改行正規化の基準にする。
+- Markdown、JavaScript、JSON、YAML、PowerShell、Shell script は UTF-8 で保存する。
+- Shell script は LF を維持する。
+- 生成物を `out/` に出す場合も、可能な限り UTF-8 で出力する。

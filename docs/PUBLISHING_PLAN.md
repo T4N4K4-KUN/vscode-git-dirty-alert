@@ -108,6 +108,7 @@ Keep out of the published VSIX:
 - generated `.vsix` files
 - personal workspace files
 - `out/`
+- `runs/`
 - development-only scripts if not needed by users
 - internal notes that are not useful to extension users
 
