@@ -5,7 +5,9 @@ Repository-specific instructions for Codex and other coding agents.
 ## Communication
 
 - Chat with the user in Japanese.
-- Repository documents may be written in English when they are intended for public users or Marketplace publication.
+- Use English for user-facing public documents, Marketplace text, package metadata, and release notes.
+- Japanese is allowed for internal workflow documents, local planning notes, and run records.
+- Run records may use Japanese by default. Add a short English summary only when the record is useful for public readers.
 - Keep progress updates short and concrete.
 
 ## Working Model

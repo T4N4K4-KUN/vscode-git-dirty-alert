@@ -118,6 +118,30 @@ yyyymmdd-hhmmssSSS_<branch>
 - 出力・ジャーナル類は上書きしない。新しい RUN-ID かタイムスタンプ付きファイルにする。
 - Marketplace パッケージには `runs/` も `out/` も含めない。
 
+## ドキュメントの言語方針
+
+全部を英語にしない。公開品質と作業速度の両方を優先して、読む人で分ける。
+
+英語を基本にするもの:
+
+- `README.md`
+- `CHANGELOG.md`
+- `LICENSE`
+- `SECURITY.md`
+- issue / PR template
+- `package.json` の Marketplace 表示文言
+- GitHub release notes
+
+日本語でよいもの:
+
+- `AGENTS.md`
+- `docs/GIT_WORKFLOW.md`
+- `docs/ai/*`
+- ローカル作業メモ
+- `runs/<run_id>/` の詳細記録
+
+`runs/<run_id>/` を public repo に残す場合は、必要に応じて冒頭に短い English Summary を置き、詳細は日本語でよい。
+
 ## main へのマージ条件
 
 最低限:
