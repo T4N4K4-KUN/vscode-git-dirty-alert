@@ -165,7 +165,9 @@ Before the recommended first public release, fix or verify:
 - Prevent overlapping refreshes when polling or file events happen close together.
 - Add remote fetch scheduling and manual watch mode.
 - Consider a timeout for slow `git status` calls.
-- Avoid surprising global `workbench.colorCustomizations` writes, or document and gate them clearly.
+- Gate any `workbench.colorCustomizations` writes behind explicit settings.
+- Keep forced Git decoration color overwrites opt-in, confirm before overwriting existing settings, and skip the confirmation when the relevant user settings file does not exist yet.
+- Save backup metadata before forced Git decoration color overwrites and provide a restore path.
 - Ensure settings webview validation prevents invalid tier/color states.
 
 ## Test Plan

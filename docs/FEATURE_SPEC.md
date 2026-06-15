@@ -259,6 +259,58 @@ README should explain:
 - VS Code `git.autofetch` can also update those refs.
 - Git Simple Alert's own fetch settings can make behind alerts appear without relying on VS Code autofetch.
 
+## Git Decoration Color Customization
+
+The extension may support optional Git file decoration color management for VS Code's
+`workbench.colorCustomizations`.
+
+Target keys:
+
+- `gitDecoration.modifiedResourceForeground`
+- `gitDecoration.untrackedResourceForeground`
+
+Default behavior:
+
+- Do not force Git decoration colors by default.
+- Do not overwrite an existing user value unless force mode is explicitly enabled.
+- Apply only the color keys managed by Git Simple Alert.
+- Never replace the entire `workbench.colorCustomizations` object.
+
+Settings:
+
+- `gitSimpleAlert.applyGitDecorationColors`
+  - Default: `false`
+  - When disabled, the extension does not apply Git decoration colors.
+  - If previously applied colors are still present, the extension should remove only values it can identify as extension-managed.
+- `gitSimpleAlert.forceGitDecorationColors`
+  - Default: `false`
+  - When disabled, existing user values for the same keys are preserved.
+  - When enabled, configured Git Simple Alert colors may overwrite existing values for the target keys.
+- `gitSimpleAlert.gitDecorationColors`
+  - Stores user-selected colors for the supported Git decoration states.
+
+Force-mode confirmation:
+
+- Before force mode applies any overwrite, show a confirmation dialog.
+- The confirmation should explain that Git Simple Alert will update VS Code's
+  `workbench.colorCustomizations`, and that existing Git decoration color keys may be overwritten.
+- The confirmation should mention where the backup will be saved.
+- If the relevant user settings file does not exist yet, skip the confirmation dialog because there is no existing settings file content to protect.
+- If the user cancels, do not apply the forced color update.
+
+Backup and restore:
+
+- Before applying forced overwrites, save a backup of the previous managed color values.
+- Prefer extension global storage for backup metadata instead of writing repository artifacts.
+- The backup should include:
+  - creation time
+  - configuration target
+  - previous values for managed keys
+  - values applied by Git Simple Alert
+- Provide a restore command that can restore the backed-up managed values.
+- When disabling color management, remove a managed key only if its current value still matches the value last applied by the extension.
+- If the user manually changes a managed key after Git Simple Alert applies it, do not remove that user-edited value automatically.
+
 ## Settings Prefix
 
 Use `gitSimpleAlert.*` for settings before Marketplace publication.
