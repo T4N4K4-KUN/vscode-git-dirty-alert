@@ -266,8 +266,35 @@ The extension may support optional Git file decoration color management for VS C
 
 Target keys:
 
-- `gitDecoration.modifiedResourceForeground`
 - `gitDecoration.untrackedResourceForeground`
+- `gitDecoration.conflictingResourceForeground`
+- `gitDecoration.ignoredResourceForeground`
+
+Priority:
+
+1. Untracked files
+   - Highest priority because new files are easy to miss and are not included by `git commit -a`.
+   - This helps prevent the common mistake of creating a file but not committing or pushing it.
+2. Conflicting files
+   - High priority because conflicts are more dangerous than ordinary uncommitted changes.
+   - The status bar may report an uncommitted alert, but file-level color should still point to the problem file.
+3. Ignored files
+   - Lower priority because ignored files are usually excluded intentionally.
+   - This can still help explain why a file is not being committed.
+   - Use a less aggressive color by default to avoid noise from expected ignored paths such as build output or dependency folders.
+
+Non-goals for the default target set:
+
+- `gitDecoration.modifiedResourceForeground`
+- `gitDecoration.stageModifiedResourceForeground`
+- `gitDecoration.deletedResourceForeground`
+- `gitDecoration.stageDeletedResourceForeground`
+- `gitDecoration.renamedResourceForeground`
+
+Rationale:
+
+- Ordinary modified, staged, deleted, and renamed states are already covered by the extension's uncommitted status-bar alert.
+- Git decoration colors should focus on file-level cases where the status-bar summary is not specific enough or may not alert by default.
 
 Default behavior:
 
